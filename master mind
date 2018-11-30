@@ -1,0 +1,250 @@
+# masterminfGame.py
+# TaingL.
+
+# This program will get the users to input 4 color out
+# of 6 color to match with the sceret code that is generated
+# by computer for 10 times, if they dont get the right answer
+# they will loose.
+# still need to work on.
+
+from random import*
+from graphics import*
+
+def gameBoard():
+    
+    global guess
+    global colors
+    
+    # Create the colors List.
+    colors = ["blue", "pink", "yellow", "red", "orange", "green"]
+    
+    # Create a block.
+    block1 = Rectangle(Point(3,0), Point(170,70))
+    block1.setFill("peru")
+    block1.draw(win)
+
+    block2 = Rectangle(Point(3,70), Point(90,275))
+    block2.setFill("chocolate")
+    block2.draw(win)
+
+    block3 = Rectangle(Point(3,275), Point(90,297))
+    block3.setFill("peru")
+    block3.draw(win)
+
+    block = Rectangle(Point(90,70), Point(170,297))
+    block.setFill("peru")
+    block.draw(win)
+    
+    # Create 6 color for user to choose.
+    Blue =Circle(Point(15,55),5)
+    Blue.setFill("Blue")
+    Blue.draw(win)
+    text1 = Text(Point(15, 44), "b")
+    text1.draw(win)
+    
+    Pink =Circle(Point(35,55),5)
+    Pink.setFill("Pink")
+    Pink.draw(win)
+    text2 = Text(Point(35, 44), "p")
+    text2.draw(win)
+    
+    Orange =Circle(Point(55,55),5)
+    Orange.setFill("Orange")
+    Orange.draw(win)
+    text3 = Text(Point(55, 44), "o")
+    text3.draw(win)
+    
+    Red =Circle(Point(75,55),5)
+    Red.setFill("Red")
+    Red.draw(win)
+    text4 = Text(Point(75, 44), "r")
+    text4.draw(win)
+    
+    Yellow =Circle(Point(95,55),5)
+    Yellow.setFill("Yellow")
+    Yellow.draw(win)
+    text5 = Text(Point(95, 44), "y")
+    text5.draw(win)
+    
+    Green =Circle(Point(115,55),5)
+    Green.setFill("Green")
+    Green.draw(win)
+    text6 = Text(Point(115, 44), "g")
+    text6.draw(win)
+
+    # Create the guess circle.
+    for y in range(85,286,20):
+        for x in range (15,76,20):
+            Guess = Circle(Point(x,y),5)
+            Guess.setFill("darkred")
+            Guess.draw(win)
+            
+    # Creat the result circle.
+    for y in range(85,266,20):
+        for x in range (105,136,10):
+            Guess = Circle(Point(x,y),2.5)
+            Guess.setFill("darkred")
+            Guess.draw(win)
+
+#Create Click to restart the game.
+    newGamebox= Rectangle(Point(20,10), Point(70,30))
+    newGamebox.setFill("darkred")
+    newGamebox.draw(win)
+    newGametext = Text(Point(45,20), "New Game")
+    newGametext.setTextColor("snow")
+    newGametext.setSize(12)
+    newGametext.draw(win)
+    #Create click to close.
+    closebox= Rectangle(Point(90,10), Point(140,30))
+    closebox.setFill("darkred")
+    closebox.draw(win)
+    closeText = Text(Point(115, 20), "Close")
+    closeText.setTextColor("snow")
+    closeText.setSize(12)
+    closeText.draw(win)    
+           
+def getSecretCode():
+
+    colors = ["b", "p", "o", "r", "y", "g"]
+    Scode = []
+    for i in range(4):
+        color = colors[randrange(0,6)]
+        Scode.append(color)
+    return Scode
+
+def getInput(turn):
+    # draw the box and get the text from user as a string.
+    step = turn-1
+    Input = Entry(Point(-20, 85+step*20), 5)
+    Input.draw(win)
+    checkbox= Rectangle(Point(145, 80+step*20), Point(165, 90+step*20))
+    checkbox.setFill("Brown")
+    checkbox.draw(win)
+    checkText= Text(Point(155, 85+step*20), "Check")
+    checkText.setFill("snow")
+    checkText.setSize(8)
+    checkText.draw(win)
+
+    win.getMouse()
+    guess= Input.getText()
+    Input.undraw()
+    # Create a list of the input.
+    InputList = []
+    for ch in(guess):
+        InputList.append(ch)
+    
+    # Create the fill-in circle from the input list.
+    for i in range (len(InputList)):
+        for color in (colors):
+            if color[0] == InputList[i]:
+                circ = Circle(Point(15+20*i, 85+20*(turn-1)),5)
+                circ.setFill(color)
+                circ.draw(win)
+    checkbox.undraw()
+    checkText.undraw()
+    return (InputList)
+
+def getResult(code, guess, turn):
+    step= turn-1
+    #creat the tempCode from the code.
+    tempCode=[]
+    for i in (code):
+        tempCode.append(i)
+    
+    #get the right color and right position (Blacks).
+    for i in range (len(guess)):
+        if guess[i] == tempCode[i]:
+            guess[i]= "bl"
+            tempCode[i] = "bl"
+            
+    # go though the guess list to find the color that match in scode (white).
+    for i in range (4):
+        if guess[i] != "bl":
+            for j in range (4):
+                if guess[i] == tempCode[j]:
+                    guess[i]= "wh"
+                    tempCode[j] = "wh"
+            
+    countBlack = tempCode.count("bl")
+    countWhite = tempCode.count ("wh")
+
+
+    for j in range(countBlack):
+        sCirc = Circle(Point(105+10*j, 85+20*step), 2.5)
+        sCirc.setFill("black")
+        sCirc.draw(win)
+    for j in range(countWhite):
+        sCirc = Circle(Point(105+ 10*(j+countBlack), 85+20*step), 2.5)
+        sCirc.setFill("white")
+        sCirc.draw(win)
+    return (countBlack, countWhite)            
+
+#creat onturn in order to call it under the rule of the game.            
+def oneTurn(code, turn):
+    InputList = getInput(turn)
+    bl, wh = getResult(code, InputList, turn)
+    return bl, wh
+    
+def game():
+    secretCode = getSecretCode()
+    board = gameBoard()
+    turn = 1
+    black =0
+
+    # game condition. 
+    while black < 4 and turn <= 10:
+        black, white= oneTurn(secretCode, turn)
+        turn = turn +1
+
+        # for losing the game.
+        if turn >10:
+            for i in range(len(secretCode)):
+                for color in (colors):
+                    if color[0]== secretCode[i]:
+                        circ= Circle(Point(15+20*i, 285),5)
+                        circ.setFill(color)
+                        circ.draw(win)
+            
+            box = Rectangle(Point(10, 130), Point(120, 170))
+            box.setFill("darkred")
+            box.draw(win)
+            text= Text(Point(65,150), "You Lose T.T")
+            text.setSize(28)
+            text.setTextColor("Snow")
+            text.draw(win)
+        # Win the game.
+        if black==4:
+            for i in range(len(secretCode)):
+                for color in (colors):
+                    if color[0]== secretCode[i]:
+                        circ= Circle(Point(15+20*i, 285),5)
+                        circ.setFill(color)
+                        circ.draw(win)
+            box = Rectangle(Point(15, 130), Point(115, 170))
+            box.setFill("darkred")
+            box.draw(win)
+            text= Text(Point(65,150), "You win.")
+            text.setSize(28)
+            text.setTextColor("Snow")
+            text.draw(win)
+
+def main():
+    global win
+    win = GraphWin("Master Mind Game", 380,600)
+    win.setCoords(-40,0,170,300)
+    win.setBackground("brown")
+    
+    game()
+    p=win.getMouse()
+    x, y = p.getX(), p.getY()
+    
+    while x>=20 and x<=70 and y>=10 and y<=30:
+        game()
+        p= Point(x,y)
+        p=win.getMouse()
+        x, y = p.getX(), p.getY()
+        
+    while x>=90 and x<=140 and y >=10 and y<=30:
+        win.close()
+    
+main()
